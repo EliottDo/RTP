@@ -1,4 +1,4 @@
-package com.dev.rpt
+package com.dev.rptsoc
 
 import org.junit.Test
 

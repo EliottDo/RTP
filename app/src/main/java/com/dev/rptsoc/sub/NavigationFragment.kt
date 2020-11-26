@@ -15,9 +15,10 @@ import android.util.Log
 import android.view.*
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
-import com.dev.rpt.MainClusterActivity
-import com.dev.rpt.R
-import com.dev.rpt.SampleClusterServiceImpl
+import com.dev.rptsoc.MainClusterActivity
+import com.dev.rptsoc.R
+import com.dev.rptsoc.SampleClusterServiceImpl
+
 import kotlinx.android.synthetic.main.fragment_navigation.*
 
 @SuppressLint("LongLogTag")
@@ -25,31 +26,24 @@ import kotlinx.android.synthetic.main.fragment_navigation.*
 class NavigationFragment : Fragment() {
     private var mDisplayManager: DisplayManager? = null
     private var mUnobscuredBounds: Rect? = null
-    private val mDisplayListener: DisplayManager.DisplayListener =
-        object : DisplayManager.DisplayListener {
-
-
+    private val mDisplayListener: DisplayManager.DisplayListener = object : DisplayManager.DisplayListener {
             override fun onDisplayAdded(displayId: Int) {
                 val navDisplayId: Int = virtualDisplayId
-                Log.i(TAG, ("onDisplayAdded, displayId: $displayId, navigation display id: $navDisplayId"))
+
                 if (navDisplayId == displayId) {
                     try {
+                        Log.i(TAG, "starttt setClusterActivityLaunchOptions")
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            service?.setClusterActivityLaunchOptions(
-                                CarInstrumentClusterManager.CATEGORY_NAVIGATION,
-                                ActivityOptions.makeBasic().setLaunchDisplayId(displayId)
-                            )
+                            service?.setClusterActivityLaunchOptions(CarInstrumentClusterManager.CATEGORY_NAVIGATION, ActivityOptions.makeBasic().setLaunchDisplayId(displayId))
+                            Log.i(TAG, "setClusterActivityLaunchOptions success")
                         }
                         mRegisteredNavDisplayId = displayId
-                        service?.setClusterActivityState(
-                            CarInstrumentClusterManager.CATEGORY_NAVIGATION,
-                            ClusterActivityState.create(true, mUnobscuredBounds).toBundle()
-                        )
+                        service?.setClusterActivityState(CarInstrumentClusterManager.CATEGORY_NAVIGATION, ClusterActivityState.create(true, mUnobscuredBounds).toBundle())
                     } catch (e: CarNotConnectedException) {
-                        Log.d(TAG, e.localizedMessage + " --- \n" + e.message)
-                        throw IllegalStateException(
-                            "Failed to report nav activity cluster launch options", e
-                        )
+                        Log.d(TAG, "---" + e.localizedMessage + " --- \n" + e.message)
+                        /*throw IllegalStateException(
+                            e.toString(), e
+                        )*/
                     }
                 }
             }
@@ -58,11 +52,8 @@ class NavigationFragment : Fragment() {
                 Log.i(TAG, "onDisplayRemoved")
                 if (mRegisteredNavDisplayId == displayId) {
                     try {
-                        mRegisteredNavDisplayId =
-                            Display.INVALID_DISPLAY
-                        service?.setClusterActivityLaunchOptions(
-                            CarInstrumentClusterManager.CATEGORY_NAVIGATION, null
-                        )
+                        mRegisteredNavDisplayId = Display.INVALID_DISPLAY
+                        service?.setClusterActivityLaunchOptions(CarInstrumentClusterManager.CATEGORY_NAVIGATION, null)
                     } catch (e: CarNotConnectedException) {
                         // This can happen only during shutdown, ignore.
                     }
@@ -82,37 +73,27 @@ class NavigationFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        navSurface.holder.addCallback(object : SurfaceHolder.Callback {
+        nav_surface.holder.addCallback(object : SurfaceHolder.Callback {
             @SuppressLint("LongLogTag")
             override fun surfaceCreated(holder: SurfaceHolder) {
                 Log.i(TAG, "surfaceCreated, holder: $holder")
             }
 
             @SuppressLint("LongLogTag")
-            override fun surfaceChanged(
-                holder: SurfaceHolder,
-                format: Int,
-                width: Int,
-                height: Int
-            ) {
+            override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
                 Log.i(TAG, ("surfaceChanged, holder: " + holder + ", size:" + width + "x" + height + ", format:" + format))
 
                 //Create dummy unobscured area to report to navigation activity.
                 mUnobscuredBounds = Rect(40, 0, width - 80, height - 40)
                 if (mVirtualDisplay == null) {
-                    mVirtualDisplay =
-                        createVirtualDisplay(holder.surface, width, height)
+                    mVirtualDisplay = createVirtualDisplay(holder.surface, width, height)
                 } else {
                     mVirtualDisplay?.surface = holder.surface
                 }
             }
 
             override fun surfaceDestroyed(holder: SurfaceHolder) {
-                Log.i(
-                    TAG,
-                    ("surfaceDestroyed, holder: " + holder + ", detaching surface from"
-                            + " display, surface: " + holder.surface)
-                )
+                Log.i(TAG, ("surfaceDestroyed, holder: " + holder + ", detaching surface from" + " display, surface: " + holder.surface))
                 // detaching surface is similar to turning off the display
                 mVirtualDisplay?.surface = null
             }
@@ -120,20 +101,9 @@ class NavigationFragment : Fragment() {
     }
 
     @SuppressLint("LongLogTag")
-    private fun createVirtualDisplay(
-        surface: Surface,
-        width: Int,
-        height: Int
-    ): VirtualDisplay {
-        Log.i(
-            TAG,
-            ("createVirtualDisplay, surface: " + surface + ", width: " + width
-                    + "x" + height)
-        )
-        return mDisplayManager!!.createVirtualDisplay(
-            "Cluster-App-VD", width, height, 160, surface,
-            DisplayManager.VIRTUAL_DISPLAY_FLAG_OWN_CONTENT_ONLY
-        )
+    private fun createVirtualDisplay(surface: Surface, width: Int, height: Int): VirtualDisplay {
+        Log.i(TAG, ("createVirtualDisplay, surface: " + surface + ", width: " + width + "x" + height))
+        return mDisplayManager?.createVirtualDisplay("Cluster-App-VD", width, height, 160, surface, DisplayManager.VIRTUAL_DISPLAY_FLAG_OWN_CONTENT_ONLY)!!
     }
 
     @SuppressLint("LongLogTag")
@@ -146,12 +116,11 @@ class NavigationFragment : Fragment() {
         get() = (activity as MainClusterActivity?)?.mService
 
     private val virtualDisplayId: Int
-        private get() = if ((mVirtualDisplay != null && mVirtualDisplay!!.display != null)) mVirtualDisplay!!.display
+        private get() = if ((mVirtualDisplay != null && mVirtualDisplay?.display != null)) mVirtualDisplay?.display!!
             .displayId else Display.INVALID_DISPLAY
 
     companion object {
-        const val TAG: String = "ChoanhChoanhChoanhChoanh"
-
+        const val TAG: String = "NAVIGATION_FRAGMENT_TAG"
         // Static because we want to keep alive this virtual display when navigating through
         // ViewPager (this fragment gets dynamically destroyed and created)
         private var mVirtualDisplay: VirtualDisplay? = null

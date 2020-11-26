@@ -1,4 +1,4 @@
-package com.dev.rpt
+package com.dev.rptsoc
 
 import android.content.Context
 import android.hardware.display.DisplayManager
@@ -69,7 +69,7 @@ class ClusterDisplayProvider internal constructor(
     }
 
     companion object {
-        private val TAG = "ChoanhChoanhaaa"
+        private val TAG = "ClusterDisplay_TAG"
         private const val NETWORKED_DISPLAY_WIDTH = 1280
         private const val NETWORKED_DISPLAY_HEIGHT = 720
         private const val NETWORKED_DISPLAY_DPI = 320

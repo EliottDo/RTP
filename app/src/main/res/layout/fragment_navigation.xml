@@ -10,7 +10,7 @@
         android:layout_height="match_parent">
 
         <SurfaceView
-            android:id="@+id/navSurface"
+            android:id="@+id/nav_surface"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="20dp"/>

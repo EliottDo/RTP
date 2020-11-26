@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    coreApp="true"
-    package="com.dev.rpt">
+    package="com.dev.rptsoc"
+    coreApp="true">
+
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
     <uses-permission android:name="android.permission.CONTROL_INCALL_EXPERIENCE"
         tools:ignore="ProtectedPermissions" />
@@ -16,14 +17,14 @@
     <uses-permission android:name="android.permission.INTERNAL_SYSTEM_WINDOW"
         tools:ignore="ProtectedPermissions" />
 
-
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.RPT">
+        android:theme="@style/Theme.RPTSoc"
+        android:usesCleartextTraffic="true">
 
         <service android:name=".SampleClusterServiceImpl"
             android:exported="false"
